@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Llená la Media - Arkana Games</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #8B1538 0%, #4A0E1F 50%, #2D0812 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Estrellas de fondo */
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      animation: twinkle 3s infinite ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    /* Preloader */
+    #preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #8B1538 0%, #4A0E1F 50%, #2D0812 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    #preloader.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loader-content {
+      text-align: center;
+      z-index: 2;
+    }
+
+    .loader-logo {
+      width: 120px;
+      height: auto;
+      margin-bottom: 30px;
+      filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
+    }
+
+    .loader-text {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 700;
+      color: #FFD700;
+      margin-bottom: 30px;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    }
+
+    .progress-bar-container {
+      width: 280px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 2px solid rgba(255, 215, 0, 0.3);
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700);
+      background-size: 200% 100%;
+      animation: shimmer 2s infinite;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -100% 0; }
+      100% { background-position: 100% 0; }
+    }
+
+    /* Contenedor principal */
+    .container {
+      position: relative;
+      z-index: 2;
+      width: 95%;
+      max-width: 500px;
+      padding: 20px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .container.visible {
+      opacity: 1;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      width: 100px;
+      height: auto;
+      margin-bottom: 15px;
+      filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.4));
+    }
+
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #4A7C34 0%, #2D4A1F 100%);
+      color: #FFD700;
+      padding: 10px 25px;
+      border-radius: 25px;
+      font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+      font-weight: 600;
+      border: 2px solid rgba(255, 215, 0, 0.3);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.8rem, 6vw, 2.5rem);
+      font-weight: 900;
+      color: #FFD700;
+      text-shadow: 0 0 30px rgba(255, 215, 0, 0.6),
+                   0 4px 8px rgba(0, 0, 0, 0.5);
+      margin-bottom: 10px;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      font-size: clamp(0.85rem, 2.5vw, 1rem);
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.5;
+      max-width: 90%;
+      margin: 0 auto;
+    }
+
+    .game-area {
+      background: linear-gradient(135deg, rgba(139, 21, 56, 0.6) 0%, rgba(74, 14, 31, 0.8) 100%);
+      border-radius: 20px;
+      padding: 30px 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      border: 2px solid rgba(255, 215, 0, 0.2);
+      margin-top: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stocking-container {
+      position: relative;
+      width: 100%;
+      max-width: 300px;
+      margin: 0 auto 30px;
+      aspect-ratio: 1;
+    }
+
+    .stocking {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .stocking-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 15px 40px rgba(0, 0, 0, 0.6)) drop-shadow(0 5px 15px rgba(0, 0, 0, 0.4));
+    }
+
+    .stocking-fill {
+      transition: height 0.6s ease, y 0.6s ease;
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle, #FFD700, transparent);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: sparkleFloat 1.5s ease-out forwards;
+    }
+
+    @keyframes sparkleFloat {
+      0% { transform: translate(0, 0) scale(0); opacity: 1; }
+      100% { transform: translate(var(--tx), var(--ty)) scale(1.5); opacity: 0; }
+    }
+
+    .progress-section {
+      margin: 25px 0;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+      color: #FFD700;
+      font-weight: 600;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 25px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 15px;
+      overflow: hidden;
+      border: 2px solid rgba(255, 215, 0, 0.3);
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
+      background-size: 200% 100%;
+      animation: progressShine 2s infinite;
+      width: 0%;
+      transition: width 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+    }
+
+    @keyframes progressShine {
+      0% { background-position: -100% 0; }
+      100% { background-position: 100% 0; }
+    }
+
+    .fill-button {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      border: none;
+      border-radius: 15px;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.1rem, 3vw, 1.3rem);
+      font-weight: 700;
+      color: #8B1538;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 20px;
+    }
+
+    .fill-button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 215, 0, 0.6);
+    }
+
+    .fill-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .fill-button.pulse {
+      animation: buttonPulse 0.3s ease;
+    }
+
+    @keyframes buttonPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(0.95); }
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal {
+      background: linear-gradient(135deg, #2D0812 0%, #4A0E1F 100%);
+      border-radius: 20px;
+      padding: 40px 30px;
+      max-width: 450px;
+      width: 95%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+      border: 3px solid #FFD700;
+      text-align: center;
+      animation: modalBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      position: relative;
+    }
+
+    @keyframes modalBounce {
+      0% { transform: scale(0.3); opacity: 0; }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.5rem, 5vw, 2rem);
+      font-weight: 700;
+      color: #FFD700;
+      margin-bottom: 20px;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    }
+
+    .modal-message {
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .prize-box {
+      background: linear-gradient(135deg, #8B1538 0%, #5A0F23 100%);
+      border: 3px solid #FFD700;
+      border-radius: 15px;
+      padding: 25px 20px;
+      margin: 20px 0;
+      box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .prize-box::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+      animation: prizeShine 3s infinite;
+    }
+
+    @keyframes prizeShine {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .prize-label {
+      font-size: clamp(0.9rem, 2.5vw, 1rem);
+      color: #FFD700;
+      font-weight: 600;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .prize-value {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2rem, 8vw, 3rem);
+      font-weight: 900;
+      color: #FFD700;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+      animation: prizeGlow 2s infinite;
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes prizeGlow {
+      0%, 100% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+      50% { text-shadow: 0 0 40px rgba(255, 215, 0, 1); }
+    }
+
+    .accept-button {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      border: none;
+      border-radius: 12px;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      font-weight: 700;
+      color: #8B1538;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 20px;
+    }
+
+    .accept-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 215, 0, 0.6);
+    }
+
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      pointer-events: none;
+      z-index: 1001;
+    }
+
+    @keyframes confettiFall {
+      to {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    .already-played {
+      text-align: center;
+      padding: 30px 20px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .already-played-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.5rem, 5vw, 2rem);
+      color: #FFD700;
+      margin-bottom: 15px;
+    }
+
+    .already-played-message {
+      font-size: clamp(0.95rem, 3vw, 1.1rem);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 480px) {
+      .game-area {
+        padding: 25px 15px;
+      }
+      
+      .stocking-container {
+        max-width: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stars" id="stars"></div>
+
+  <div id="preloader">
+    <div class="loader-content">
+      <img src="assets/image.png" alt="Arkana Games" class="loader-logo">
+      <div class="loader-text">Cargando...</div>
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="loaderProgress"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" id="mainContainer">
+    <div class="header">
+      <img src="assets/image.png" alt="Arkana Games" class="logo">
+      <div class="badge">🎄 PROMOCIÓN ESPECIAL DE NAVIDAD 🎄</div>
+      <h1 class="title">Llená la Media</h1>
+      <p class="subtitle">Hacé click en el botón para llenar la media navideña y descubrí tu premio especial del día!</p>
+    </div>
+
+    <div class="game-area">
+      <div id="gameContent">
+        <div class="stocking-container">
+          <div class="stocking">
+            <svg class="stocking-svg" viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <filter id="shadow">
+                  <feDropShadow dx="0" dy="5" stdDeviation="5" flood-opacity="0.4"/>
+                </filter>
+
+                <linearGradient id="redGrad" x1="20%" y1="0%" x2="80%" y2="100%">
+                  <stop offset="0%" style="stop-color:#FF4D4D;stop-opacity:1" />
+                  <stop offset="30%" style="stop-color:#E63946;stop-opacity:1" />
+                  <stop offset="60%" style="stop-color:#C1121F;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#8B0000;stop-opacity:1" />
+                </linearGradient>
+
+                <radialGradient id="whiteGrad" cx="50%" cy="30%">
+                  <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+                  <stop offset="60%" style="stop-color:#F5F5F5;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#E8E8E8;stop-opacity:1" />
+                </radialGradient>
+
+                <linearGradient id="fillGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" style="stop-color:#FFD700;stop-opacity:0.95" />
+                  <stop offset="50%" style="stop-color:#FFC107;stop-opacity:0.9" />
+                  <stop offset="100%" style="stop-color:#FFA000;stop-opacity:0.9" />
+                </linearGradient>
+
+                <pattern id="texture" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+                  <circle cx="2" cy="2" r="0.8" fill="#000000" opacity="0.08"/>
+                  <circle cx="6" cy="6" r="0.8" fill="#FFFFFF" opacity="0.12"/>
+                </pattern>
+
+                <pattern id="furTexture" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+                  <circle cx="1" cy="1" r="1.2" fill="#FFFFFF" opacity="0.6"/>
+                  <circle cx="4" cy="3" r="1" fill="#F0F0F0" opacity="0.5"/>
+                  <circle cx="2" cy="5" r="0.8" fill="#FFFFFF" opacity="0.4"/>
+                </pattern>
+
+                <!-- Clip pierna -->
+                <clipPath id="clipLeg">
+                  <path d="M 70 75
+                           L 140 75
+                           L 140 180
+                           Q 140 225 90 225
+                           Q 60 225 60 180
+                           L 60 75
+                           Z"/>
+                </clipPath>
+
+                <!-- Clip pie -->
+                <clipPath id="clipFoot">
+                  <path d="M 90 180
+                           L 140 180
+                           L 140 120
+                           L 175 120
+                           L 175 180
+                           Q 175 225 135 225
+                           L 90 225
+                           Z"/>
+                </clipPath>
+              </defs>
+
+              <!-- Sombra -->
+              <ellipse cx="120" cy="235" rx="80" ry="12" fill="#000000" opacity="0.35"/>
+              <ellipse cx="120" cy="233" rx="65" ry="8" fill="#000000" opacity="0.2"/>
+
+              <!-- Loop -->
+              <path d="M 95 25 Q 95 15 100 15 L 105 15 Q 110 15 110 25 L 110 35 L 95 35 Z"
+                    fill="url(#redGrad)"
+                    stroke="#8B0000"
+                    stroke-width="1.5"
+                    filter="url(#shadow)"/>
+
+              <!-- Cuff -->
+              <path d="M 58 35 L 142 35 Q 148 35 148 42 L 148 68 Q 148 75 142 75 L 63 75 Q 58 75 58 68 L 58 42 Q 58 35 63 35 Z" 
+                    fill="url(#whiteGrad)" 
+                    stroke="#D0D0D0" 
+                    stroke-width="1.5"
+                    filter="url(#shadow)"/>
+
+              <path d="M 58 35 L 142 35 Q 148 35 148 42 L 148 68 Q 148 75 142 75 L 63 75 Q 58 75 58 68 L 58 42 Q 58 35 63 35 Z" 
+                    fill="url(#furTexture)"
+                    opacity="0.7"/>
+
+              <ellipse cx="70" cy="55" rx="8" ry="12" fill="#FFFFFF" opacity="0.5"/>
+              <ellipse cx="85" cy="52" rx="7" ry="10" fill="#FFFFFF" opacity="0.6"/>
+              <ellipse cx="100" cy="50" rx="9" ry="13" fill="#FFFFFF" opacity="0.55"/>
+              <ellipse cx="115" cy="52" rx="7" ry="11" fill="#FFFFFF" opacity="0.6"/>
+              <ellipse cx="130" cy="55" rx="8" ry="12" fill="#FFFFFF" opacity="0.5"/>
+
+              <path d="M 58 70 Q 65 77 72 70 Q 80 63 88 70 Q 96 77 104 70 Q 112 63 120 70 Q 128 77 136 70 Q 143 64 148 70 L 148 75 L 58 75 Z" 
+                    fill="#FFFFFF" 
+                    opacity="0.8"/>
+
+              <!-- Cuerpo rojo -->
+              <path d="M 70 75 
+                       L 140 75 
+                       L 140 120 
+                       L 175 120 
+                       L 175 180 
+                       Q 175 225 135 225 
+                       L 90 225 
+                       Q 60 225 60 180 
+                       L 60 75 
+                       Z"
+                    fill="url(#redGrad)" 
+                    stroke="#6D0000" 
+                    stroke-width="2.5"
+                    filter="url(#shadow)"/>
+
+              <path d="M 70 75 
+                       L 140 75 
+                       L 140 120 
+                       L 175 120 
+                       L 175 180 
+                       Q 175 225 135 225 
+                       L 90 225 
+                       Q 60 225 60 180 
+                       L 60 75 
+                       Z"
+                    fill="url(#texture)"/>
+
+              <!-- Highlights generales -->
+              <ellipse cx="105" cy="125" rx="30" ry="45" fill="#FFFFFF" opacity="0.18"/>
+              <ellipse cx="120" cy="105" rx="18" ry="28" fill="#FFFFFF" opacity="0.25"/>
+              <ellipse cx="160" cy="148" rx="18" ry="30" fill="#FFFFFF" opacity="0.15"/>
+              <ellipse cx="75" cy="170" rx="12" ry="20" fill="#FFFFFF" opacity="0.1"/>
+
+              <!-- Sombras -->
+              <ellipse cx="165" cy="160" rx="10" ry="25" fill="#000000" opacity="0.15"/>
+              <path d="M 60 75 L 60 180 Q 60 205 75 215 Q 63 210 60 190 Z" fill="#000000" opacity="0.18"/>
+
+              <!-- Relleno pierna -->
+              <rect id="stockingFillLeg"
+                    x="60"
+                    y="225"
+                    width="80"
+                    height="0"
+                    fill="url(#fillGrad)"
+                    clip-path="url(#clipLeg)"
+                    class="stocking-fill"/>
+
+              <!-- Relleno pie -->
+              <rect id="stockingFillFoot"
+                    x="90"
+                    y="225"
+                    width="85"
+                    height="0"
+                    fill="url(#fillGrad)"
+                    clip-path="url(#clipFoot)"
+                    class="stocking-fill"/>
+
+              <!-- Glow pierna -->
+              <rect id="stockingFillLegGlow"
+                    x="60"
+                    y="225"
+                    width="80"
+                    height="0"
+                    fill="#FFFFFF"
+                    opacity="0.3"
+                    clip-path="url(#clipLeg)"
+                    class="stocking-fill"
+                    style="mix-blend-mode:overlay;"/>
+
+              <!-- Glow pie -->
+              <rect id="stockingFillFootGlow"
+                    x="90"
+                    y="225"
+                    width="85"
+                    height="0"
+                    fill="#FFFFFF"
+                    opacity="0.3"
+                    clip-path="url(#clipFoot)"
+                    class="stocking-fill"
+                    style="mix-blend-mode:overlay;"/>
+
+              <path d="M 58 73 L 148 73" 
+                    stroke="#FFD700" 
+                    stroke-width="2" 
+                    opacity="0.8"
+                    stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="progress-section">
+          <div class="progress-label">
+            <span>🎁 Abundancia</span>
+            <span id="progressPercent">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+
+        <button class="fill-button" id="fillButton">
+          🎅 Llenar Media 🎅
+        </button>
+      </div>
+
+      <div id="alreadyPlayedMessage" class="already-played" style="display: none;">
+        <h2 class="already-played-title">¡Ya jugaste hoy!</h2>
+        <p class="already-played-message">Ya llenaste tu media y reclamaste tu premio de hoy. ¡Volvé mañana para más sorpresas!</p>
+        <div class="prize-box">
+          <div class="prize-label">⭐ Tu premio de hoy ⭐</div>
+          <div class="prize-value" id="todayPrize"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h2 class="modal-title">🎉 ¡Felicitaciones! 🎉</h2>
+      <p class="modal-message">¡Llenaste la media completamente! Descubrí tu premio especial:</p>
+      <div class="prize-box">
+        <div class="prize-label">⭐ TU PREMIO ⭐</div>
+        <div class="prize-value" id="prizeValue"></div>
+      </div>
+      <button class="accept-button" id="acceptButton">Reclamar Premio</button>
+    </div>
+  </div>
+
+  <!-- 🔊 Sonidos -->
+  <audio id="fillSound" src="assets/v.mp3" preload="auto"></audio>
+  <audio id="prizeSound" src="assets/prize-sound.mp3" preload="auto"></audio>
+  <!-- 🔊 Música de fondo en loop -->
+  <audio id="bgMusic" src="assets/background-music.mp3" preload="auto" loop></audio>
+
+  <script>
+    const STORAGE_KEY = 'llenarMediaArkana_sync_v1';
+
+    // Estrellas
+    (function createStars() {
+      const starsContainer = document.getElementById('stars');
+      for (let i = 0; i < 100; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.width = star.style.height = Math.random() * 3 + 1 + 'px';
+        star.style.animationDelay = Math.random() * 3 + 's';
+        starsContainer.appendChild(star);
+      }
+    })();
+
+    // Preloader
+    let preloadProgress = 0;
+    const loaderProgress = document.getElementById('loaderProgress');
+    const preloader = document.getElementById('preloader');
+    const mainContainer = document.getElementById('mainContainer');
+
+    const loaderInterval = setInterval(() => {
+      preloadProgress += Math.random() * 15 + 10;
+      if (preloadProgress >= 100) {
+        preloadProgress = 100;
+        loaderProgress.style.width = '100%';
+        clearInterval(loaderInterval);
+
+        setTimeout(() => {
+          preloader.classList.add('hidden');
+          mainContainer.classList.add('visible');
+          checkGameStatus();
+        }, 500);
+      } else {
+        loaderProgress.style.width = preloadProgress + '%';
+      }
+    }, 200);
+
+    // Premios ponderados
+    function pickWeighted(items) {
+      const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
+      let random = Math.random() * totalWeight;
+      for (const item of items) {
+        if (random < item.weight) return item.value;
+        random -= item.weight;
+      }
+      return items[0].value;
+    }
+
+    const prizes = [
+      { value: "Bono 100%", weight: 35 },
+      { value: "Bono 150%", weight: 30 },
+      { value: "Bono 200%", weight: 20 },
+      { value: "Bono a Elección", weight: 10 },
+      { value: "Bono Sorpresa", weight: 5 }
+    ];
+
+    // Variables juego
+    let currentProgress = 0;
+    const fillButton = document.getElementById('fillButton');
+    const progressFill = document.getElementById('progressFill');
+    const progressPercent = document.getElementById('progressPercent');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const prizeValue = document.getElementById('prizeValue');
+    const acceptButton = document.getElementById('acceptButton');
+    const gameContent = document.getElementById('gameContent');
+    const alreadyPlayedMessage = document.getElementById('alreadyPlayedMessage');
+    const todayPrize = document.getElementById('todayPrize');
+
+    const fillSound = document.getElementById('fillSound');
+    const prizeSound = document.getElementById('prizeSound');
+    const bgMusic = document.getElementById('bgMusic');
+    let bgStarted = false;
+
+    const fillLeg = document.getElementById('stockingFillLeg');
+    const fillFoot = document.getElementById('stockingFillFoot');
+    const glowLeg = document.getElementById('stockingFillLegGlow');
+    const glowFoot = document.getElementById('stockingFillFootGlow');
+
+    // Constantes geométricas
+    const BASE_Y = 225;
+    const TOP_LEG = 75;
+    const TOP_FOOT = 120;
+    const H_LEG = BASE_Y - TOP_LEG;   // 150
+    const H_FOOT = BASE_Y - TOP_FOOT; // 105
+
+    function saveState(extra = {}) {
+      const today = new Date().toDateString();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        date: today,
+        progress: currentProgress,
+        completed: currentProgress >= 100,
+        ...extra
+      }));
+    }
+
+    function checkGameStatus() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      const today = new Date().toDateString();
+
+      if (data.date === today) {
+        currentProgress = data.progress || 0;
+        updateProgress();
+        if (data.completed && data.prize) {
+          gameContent.style.display = 'none';
+          alreadyPlayedMessage.style.display = 'block';
+          todayPrize.textContent = data.prize;
+        }
+      }
+    }
+
+    // Actualiza porcentaje + nivel de “líquido” sincronizado pierna/pie
+    function updateProgress() {
+      const t = Math.max(0, Math.min(currentProgress, 100)) / 100;
+
+      progressFill.style.width = (t * 100) + '%';
+      progressPercent.textContent = Math.round(t * 100) + '%';
+
+      // Nivel global
+      let yLevel = BASE_Y - t * H_LEG;
+      if (yLevel < TOP_LEG) yLevel = TOP_LEG;
+      if (yLevel > BASE_Y) yLevel = BASE_Y;
+
+      // Pierna
+      const legHeight = BASE_Y - yLevel;
+      const legY = yLevel;
+
+      // Pie
+      let footHeight, footY;
+      if (yLevel >= BASE_Y) {
+        footHeight = 0;
+        footY = BASE_Y;
+      } else if (yLevel >= TOP_FOOT) {
+        footHeight = BASE_Y - yLevel;
+        if (footHeight > H_FOOT) footHeight = H_FOOT;
+        footY = BASE_Y - footHeight;
+      } else {
+        footHeight = H_FOOT;
+        footY = TOP_FOOT;
+      }
+
+      [fillLeg, glowLeg].forEach(el => {
+        if (!el) return;
+        el.setAttribute('y', legY);
+        el.setAttribute('height', legHeight);
+      });
+
+      [fillFoot, glowFoot].forEach(el => {
+        if (!el) return;
+        el.setAttribute('y', footY);
+        el.setAttribute('height', footHeight);
+      });
+
+      saveState();
+    }
+
+    function createSparkle(x, y) {
+      const sparkle = document.createElement('div');
+      sparkle.className = 'sparkle';
+      sparkle.style.left = x + 'px';
+      sparkle.style.top = y + 'px';
+      sparkle.style.setProperty('--tx', (Math.random() - 0.5) * 100 + 'px');
+      sparkle.style.setProperty('--ty', (Math.random() - 0.5) * 100 + 'px');
+      document.body.appendChild(sparkle);
+      setTimeout(() => sparkle.remove(), 1500);
+    }
+
+    fillButton.addEventListener('click', () => {
+      if (currentProgress >= 100 || fillButton.disabled) return;
+
+      fillButton.disabled = true;
+
+      // Música ambiente: arranca en el primer click
+      if (bgMusic && !bgStarted) {
+        bgMusic.volume = 0.35;
+        bgMusic.play().catch(() => {});
+        bgStarted = true;
+      }
+
+      if (fillSound) {
+        fillSound.currentTime = 0;
+        fillSound.play().catch(() => {});
+      }
+
+      const increment = Math.random() * 20 + 10; // 10–30%
+      currentProgress = Math.min(currentProgress + increment, 100);
+
+      fillButton.classList.add('pulse');
+      setTimeout(() => fillButton.classList.remove('pulse'), 300);
+
+      const rect = document.querySelector('.stocking-container').getBoundingClientRect();
+      for (let i = 0; i < 3; i++) {
+        setTimeout(() => {
+          createSparkle(
+            rect.left + rect.width / 2 + (Math.random() - 0.5) * 50,
+            rect.top + rect.height / 2 + (Math.random() - 0.5) * 50
+          );
+        }, i * 100);
+      }
+
+      updateProgress();
+
+      if (currentProgress >= 100) {
+        setTimeout(() => showPrize(), 700);
+      } else {
+        setTimeout(() => { fillButton.disabled = false; }, 700);
+      }
+    });
+
+    function createConfetti() {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti';
+      confetti.style.left = Math.random() * 100 + '%';
+      confetti.style.top = '-10px';
+      confetti.style.background = ['#FFD700', '#FFA500', '#FF6347', '#32CD32', '#1E90FF'][Math.floor(Math.random() * 5)];
+      confetti.style.animation = `confettiFall ${Math.random() * 2 + 3}s linear forwards`;
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 5000);
+    }
+
+    function showPrize() {
+      const prize = pickWeighted(prizes);
+      prizeValue.textContent = prize;
+      modalOverlay.classList.add('active');
+
+      if (prizeSound) {
+        prizeSound.currentTime = 0;
+        prizeSound.play().catch(() => {});
+      }
+
+      saveState({ prize });
+
+      for (let i = 0; i < 120; i++) {
+        setTimeout(() => createConfetti(), i * 20);
+      }
+    }
+
+    acceptButton.addEventListener('click', () => {
+      const today = new Date().toDateString();
+      const prize = prizeValue.textContent;
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        date: today,
+        progress: 100,
+        completed: true,
+        prize
+      }));
+
+      modalOverlay.classList.remove('active');
+      gameContent.style.display = 'none';
+      alreadyPlayedMessage.style.display = 'block';
+      todayPrize.textContent = prize;
+    });
+  </script>
+
+</body>
+</html>
