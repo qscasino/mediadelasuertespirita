@@ -822,13 +822,30 @@
 
     function saveState(extra = {}) {
       const today = new Date().toDateString();
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        date: today,
-        progress: currentProgress,
+    
+      // 🔁 Leer lo que ya había en storage
+      const prevRaw = localStorage.getItem(STORAGE_KEY);
+      let prev = {};
+      if (prevRaw) {
+        try {
+          prev = JSON.parse(prevRaw) || {};
+        } catch (e) {
+          prev = {};
+        }
+      }
+    
+      // 🧠 Mezclar: lo anterior + lo nuevo
+      const newData = {
+        ...prev,                        // conserva prize u otros campos
+        date: today,                    // actualiza fecha
+        progress: currentProgress,      // actualiza progreso
         completed: currentProgress >= 100,
-        ...extra
-      }));
+        ...extra                        // si pasás { prize: 'Bono 200%' } lo pisa
+      };
+    
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
     }
+
 
     function checkGameStatus() {
       const raw = localStorage.getItem(STORAGE_KEY);
